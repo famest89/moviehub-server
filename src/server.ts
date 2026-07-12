@@ -1,10 +1,11 @@
 import express from 'express';
 import { config } from 'dotenv';
+import { prisma } from './lib/prisma.js';
 
 // Import Routes
 import authRoutes from './routes/authRoutes.js';
 import movieRoutes from './routes/movieRoutes.js';
-import { prisma } from './lib/prisma.js';
+import watchlistRoutes from './routes/watchlistRoutes.js';
 
 config();
 prisma.$connect();
@@ -18,6 +19,7 @@ app.use(express.urlencoded({ extended: true }));
 // API Routes
 app.use('/auth', authRoutes);
 app.use('/movies', movieRoutes);
+app.use('/watchlist', watchlistRoutes);
 
 const PORT = 5001;
 const server = app.listen(PORT, () => {
