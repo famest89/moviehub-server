@@ -1,6 +1,7 @@
 import bcrypt from 'bcryptjs';
 import { Request, Response } from 'express';
 import { prisma } from '../lib/prisma.js';
+import { generateToken } from '../utils/generateToken.js';
 
 const register = async (req: Request, res: Response): Promise<void> => {
   const { name, email, password } = req.body;
@@ -27,6 +28,9 @@ const register = async (req: Request, res: Response): Promise<void> => {
     },
   });
 
+  // Generate JWT Token
+  const token = generateToken(user.id, res);
+
   res.status(201).json({
     status: 'success',
     data: {
@@ -35,6 +39,7 @@ const register = async (req: Request, res: Response): Promise<void> => {
         name: name,
         email: email,
       },
+      token,
     },
   });
 };
@@ -61,7 +66,7 @@ const login = async (req: Request, res: Response): Promise<void> => {
   }
 
   // Generate JWT Token
-  
+  const token = generateToken(user.id, res);
 
   res.status(200).json({
     status: 'success',
@@ -70,8 +75,21 @@ const login = async (req: Request, res: Response): Promise<void> => {
         id: user.id,
         email: email,
       },
+      token,
     },
   });
 };
 
-export { login, register };
+const logout = async (req: Request, res: Response): Promise<void> => {
+  res.cookie('jwt', '', {
+    httpOnly: true,
+    expires: new Date(0),
+  });
+
+  res.status(200).json({
+    status: 'success',
+    message: 'Logged out successfully',
+  });
+};
+
+export { login, register, logout };
