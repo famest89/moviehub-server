@@ -4,5 +4,6 @@ declare namespace NodeJS {
     NODE_ENV?: 'development' | 'production';
     JWT_SECRET: string;
     JWT_EXPIRES_IN?: `${number}${'s' | 'm' | 'h' | 'd'}`;
+    PORT: string;
   }
 }

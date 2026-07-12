@@ -13,6 +13,7 @@ const register = async (req: Request, res: Response): Promise<void> => {
 
   if (userExists) {
     res.status(400).json({ error: 'User already exists with this email' });
+    return;
   }
 
   // Hash Password
