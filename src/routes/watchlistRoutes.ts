@@ -2,6 +2,7 @@ import express from 'express';
 
 import {
   addToWatchlist,
+  getWatchlist,
   removeFromWatchlist,
   updateWatchlistItem,
 } from '../controllers/watchlistController.js';
@@ -17,6 +18,7 @@ router.use(authMiddleware);
 // use middleware on single route
 // router.post('/', authMiddleware, addToWatchlist);
 
+router.get('/', getWatchlist);
 router.post('/', validateRequest(addToWatchlistSchema), addToWatchlist);
 router.put('/:id', validateRequest(addToWatchlistSchema), updateWatchlistItem);
 router.delete('/:id', removeFromWatchlist);

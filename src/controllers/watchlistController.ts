@@ -1,6 +1,40 @@
 import { Request, Response } from 'express';
 import { prisma } from '../lib/prisma.js';
+import { WatchlistStatus } from '../generated/prisma/enums.js';
 import type { Prisma } from '../generated/prisma/client.js';
+
+const getWatchlist = async (req: Request, res: Response) => {
+  const { status } = req.query;
+
+  const where: Prisma.WatchlistItemWhereInput = {
+    userId: req.user.id,
+  };
+
+  if (
+    typeof status === 'string' &&
+    Object.values(WatchlistStatus).includes(status as WatchlistStatus)
+  ) {
+    where.status = status as WatchlistStatus;
+  }
+
+  const watchlist = await prisma.watchlistItem.findMany({
+    where,
+    include: {
+      movie: true,
+    },
+    orderBy: {
+      createdAt: 'desc',
+    },
+  });
+
+  res.status(200).json({
+    status: 'success',
+    results: watchlist.length,
+    data: {
+      watchlist,
+    },
+  });
+};
 
 const addToWatchlist = async (req: Request, res: Response) => {
   const { movieId, status, rating, notes } = req.body;
@@ -116,4 +150,9 @@ const removeFromWatchlist = async (req: Request, res: Response) => {
   });
 };
 
-export { addToWatchlist, removeFromWatchlist, updateWatchlistItem };
+export {
+  getWatchlist,
+  addToWatchlist,
+  removeFromWatchlist,
+  updateWatchlistItem,
+};
